@@ -2,7 +2,7 @@
 % Please edit documentation in R/retrain_model.R
 \name{retrain_model}
 \alias{retrain_model}
-\title{Retraining utility of the PhenoFreeze Package to add more data to the training}
+\title{Retraining utility of the anxiotraitR Package to add more data to the training}
 \usage{
 retrain_model(new_data, sex, MR, training_iterations = 1000)
 }
@@ -16,5 +16,5 @@ retrain_model(new_data, sex, MR, training_iterations = 1000)
 \item{training_iterations}{description}
 }
 \description{
-Retraining utility of the PhenoFreeze Package to add more data to the training
+Retraining utility of the anxiotraitR Package to add more data to the training
 }
