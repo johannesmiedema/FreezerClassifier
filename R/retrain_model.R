@@ -1,5 +1,5 @@
 
-#' Retraining utility of the PhenoFreeze Package to add more data to the training
+#' Retraining utility of the anxiotraitR Package to add more data to the training
 #'
 #' @param new_data dataframe containing new freezing values MR1 of bins 13 - 24 as a character
 #' @param sex "female" or "male" specifying the sex of the new data
