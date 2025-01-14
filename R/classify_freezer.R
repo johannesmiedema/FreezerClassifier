@@ -136,7 +136,8 @@ classify_freezer <- function(data_MR1, data_MR2, sex, MR, shifter=FALSE, model =
       if (length(phenotypes) == nrow(data_MR1)){
         message("MR1 classification successfull")
         message("Classified  ", length(phenotypes), " animals. ")
-        return(phenotypes)
+        return(list(classification=phenotypes, freezing=params_MR1$freeze_MR1,
+                    decayrate=params_MR1$beta_MR1, intercept=params_MR1$int_MR1))
       } else {
         stop("Classification error, recheck your input parameters")
       }
@@ -191,7 +192,8 @@ classify_freezer <- function(data_MR1, data_MR2, sex, MR, shifter=FALSE, model =
       if (length(phenotypes) == nrow(data_MR2)){
         message("MR2 classification successfull")
         message("Classified  ", length(phenotypes), " animals. ")
-        return(phenotypes)
+        return(list(classification=phenotypes, freezing=params_MR2$freeze_MR2,
+                    decayrate=params_MR2$beta_MR2, intercept=params_MR2$int_MR2))
       } else {
         stop("Classification error, recheck your input parameters")
       }
@@ -215,7 +217,8 @@ classify_freezer <- function(data_MR1, data_MR2, sex, MR, shifter=FALSE, model =
       if (length(phenotypes) == nrow(data_MR2)){
         message("MR2 classification successfull")
         message("Classified  ", length(phenotypes), " animals. ")
-        return(phenotypes)
+        return(list(classification=phenotypes, freezing=params_MR2$freeze_MR2,
+                    decayrate=params_MR2$beta_MR2, intercept=params_MR2$int_MR2))
       } else {
         stop("Classification error, recheck your input parameters")
       }
@@ -300,7 +303,8 @@ classify_freezer <- function(data_MR1, data_MR2, sex, MR, shifter=FALSE, model =
       if (length(phenotypes) == nrow(data)){
         message("Classification with retrained model was successfull")
         message("Classified  ", length(phenotypes), " animals. ")
-        return(phenotypes)
+        return(list(classification=phenotypes, freezing=params_retrained$freeze,
+                    decayrate=params_retrained$beta, intercept=params_retrained$int))
       } else {
         stop("Classification error, recheck your input parameters")
       }

@@ -1,5 +1,5 @@
 ---
-title: "Tutorial for classification and training with PhenoFreeze"
+title: "Classifying inbred mice into sustained and phasic anxiety phenotypes using anxiotraitR"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tutorial}
@@ -14,35 +14,42 @@ knitr::opts_chunk$set(
 )
 ```
 
-This tutorial shows how classification of behavioral phenotypes after auditory aversive conditioning (ACC) can be performed using the R package PhenoFreeze. This package is designed for classification of inbred mice following the experimental conditioning pipeline described by Kovlyagina and colleagues[1]. Following AAC, memory retrieval (MR) sessions are conducted to measure each animals freezing behavior. In each MR session, animals are exposed to the conditioned stimulus (CS) after a brief period of adaptation. However, the duration of adaptation may differ, the duration of CS must consist of 12 time bins for correct classification.
+This tutorial demonstrates how to perform behavioral classification of female and male mice according to their trait anxiety  using the R package anxiotraitR. The experimental pipeline to obtain the behavioral data necessary for classification is described in detail in our publication Kovlyagina et al. [1]. Briefly, we measure individual freezing responses of mice in memory retrieval sessions with a prolonged conditioned stimulus (CS) exposure of 6 min following auditory aversive conditioning (AAC). Subsequently, we employ log-linear regression to estimate the intercept and slope (regression coefficient) of the fitted freezing curve during CS exposure. Together with the average freezing during the last 3.5 min of CS exposure, we use these parameters to classify mice into sustained and phasic responders using our pre-trained machine learning (ML) models implemented in anxiotraitR [2].
 
 ## Installation
 
-For installation, devtools must be installed. The following code sequence will check for a devtools installation and will install PhenoFreeze directly from GitHub[2]:
+To install anxiotraitR, devtools must be available. The following code sequence will check for a devtools installation and then will install anxiotraitR directly from GitHub [2]:
 
 ```
 if(!require(devtools)){
     install.packages("devtools")
     library(devtools)
 }
-devtools::install_github("johannesmiedema/PhenoFreeze")
+devtools::install_github("johannesmiedema/anxiotraitR")
 ```
 
 ## Classification 
-For classification of sustained and phasic freezers, a dataframe must be provided, where each row represents the freezing values of an individual animals during CS exposure. To demonstrate this, a example dataset can be loaded. As seen below, inspecting the dataframe shows that there are 36 columns in that dataframe. However, the tone was only played during bins 13 to 24. Therefore, the dataframe must be subsetted to contain only columns 13:24:
+To classify mice into sustained and phasic responders, a data frame must be provided, where each row represents the freezing values of individual animals during CS presentation. To demonstrate this, we have included an example dataset. As seen below, the data frame contains 36 columns, each corresponding to a freezing value as a percentage in 30 s time bins during MR1 AAC.
 
 $~$
 
 ```
-library(PhenoFreeze)
+library(anxiotraitR)
 
-mydata <- PhenoFreeze::freezingDataset
+mydata <- anxiotraitR::freezingDataset
+head(mydata)
+```
+
+```{r, layout="l-body-outset", echo=FALSE}
+suppressWarnings(library(knitr))
+library(anxiotraitR)
+mydata <- anxiotraitR::freezingDataset
 head(mydata)
 ```
 
 $~$
 
-Inspecting the dataframe shows that there are 36 columns in that dataframe. However, the tone was only played during bins 13 to 24. Therefore, the dataframe must be subsetted to contain only columns 13:24:
+Classification of animals into sustained and phasic responders is performed only using freezing responses measured during CS presentation. In our example, CS occurred in bins 13 to 24. Therefore, the data frame must be subset to contain only columns 13:24 (please note that the data frame may need to be subset differently depending on the CS bins in the respective experiment) :
  
 $~$
  
@@ -52,20 +59,33 @@ mydata_subsetted <- mydata[,13:24]
 head(mydata_subsetted)
 ```
 
+```{r, layout="l-body-outset", echo=FALSE}
+suppressWarnings(library(knitr))
+library(anxiotraitR)
+mydata <- anxiotraitR::freezingDataset
+mydata_subsetted <- mydata[,13:24]
+head(mydata_subsetted)
+```
+
+
 $~$
 
-This dataframe can now be used for classification. The loaded dataset was obtained from female animals during MR session 1. These parameters need to be specified to select the correct model for classification:
+This data frame can now be used for classification. The example dataset was obtained from female animals during MR 1. These parameters need to be specified to select the correct pre-trained model for classification:
 
 $~$
-
 
 ```
-myclassification <- PhenoFreeze::classify_freezer(data_MR1 = mydata_subsetted, sex = "female", MR = 1)
+myclassification <- anxiotraitR::classify_freezer(data_MR1 = mydata_subsetted, sex = "female", MR = 1)
 head(myclassification)
 ```
 $~$
 
-The resulting object is a vector, which represents the classified phenotype of each animal in the same order as provided by the rows in the dataframe. For classification with male animals or different MR sessions, the parameters of the functions must be specified accordingly. For MR2 classification, the dataframe needs to be specified under the data_MR2 variable:
+The resulting object contains the inferred phenotype of each animal as a vector in the same order as provided by the rows in the input data frame. Furthermore, the parameters needed for the machine learning model including the intercept and slope of the fitted freezing curve and average freezing during the last 3 min of CS presentation are included in the output of the classification function.
+
+Classification results can be visualized with a bivariate plot of average freezing vs. fitted freezing curve slope (to which we refer as decay rate of freezing) or as actual freezing curves over time bins for sustained and phasic responders.
+For classification with male animals or different MR sessions (MR1 or MR2), the parameters of the function must be specified accordingly. For MR2 classification, the data frame needs to be specified under the argument data_MR2:
+
+For classification with male animals or different MR sessions (MR1 or MR2), the parameters of the function must be specified accordingly. For MR2 classification, the data frame needs to be specified under the argument data_MR2:
 
 $~$
 
