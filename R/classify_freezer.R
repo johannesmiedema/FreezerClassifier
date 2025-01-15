@@ -1,11 +1,13 @@
 
-#' Classification of phasic and sustained freezers
+#'Classification of phasic and sustained responders
 #'
-#' @param data_MR1 dataframe containing freezing values MR1 of bins 13 - 24 as a character
-#' @param data_MR2 dataframe containing freezing values MR2 of bins 13 - 24 as a character
-#' @param sex "female" or "male" specifying the sex
-#' @param MR 1 or 2 specifying the Memory Retrieval Session 1 or 2
-#' @param shifter boolean argument specifying if shifters should be included in prediction
+#' Classification of mice into sustained and phasic responders based on individual freezing behavior during prolonged memory retrieval sessions following aversive auditory conditioning.
+#'
+#' @param data_MR1 dataframe containing freezing values of individual mice during conditioned stimulus (CS) presentation at memory retrieval (MR) 1
+#' @param data_MR2 dataframe containing freezing values of individual mice during CS presentation at MR2
+#' @param sex sex of mice: "female" or "male"
+#' @param MR 1 or 2 specifying the MR session 1 or 2
+#' @param shifter boolean argument specifying if shifters should be included in the classification
 #' @param model string which specifies the path of a retrained .RDS models
 #' @param data dataframe containing freezing values for classification with a retrained model
 #' @import randomForest

@@ -1,7 +1,7 @@
-#' World Health Organization TB data
+#' Example dataset for anxiotraitR classification
 #'
 #' A subset of data from the World Health Organization Global Tuberculosis
-#' Report ...
+#'.
 #'
 #' @format ## `freezingDataset`
 #' A data frame with 40 rows and 36 columns:

@@ -1,12 +1,12 @@
 Package: anxiotraitR
 Title: Machine-learning-based phenotyping of inbred mice into sustained
-    and phasic freezers
+    and phasic responders
 Version: 0.0.0.9002
 Authors@R: c(
     person("Johannes", "Miedema", , "jmiedema@students.uni-mainz.de", role = c("cre", "aut")),
     person("Hristo", "Todorov", , "hristo.todorov@uni-mainz.d", role = "aut")
   )
-Description: Classification of behavioral endophenotypes with sex-specific machine learning models.
+Description: Classification of mice into sustained and phasic and sustained responders based on individual freezing behavior during prolonged memory retrieval sessions following aversive auditory conditioning. 
 License: GPL (>= 3)
 Depends: 
     R (>= 2.10)

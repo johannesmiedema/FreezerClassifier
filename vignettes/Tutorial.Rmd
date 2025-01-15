@@ -76,28 +76,60 @@ $~$
 
 ```
 myclassification <- anxiotraitR::classify_freezer(data_MR1 = mydata_subsetted, sex = "female", MR = 1)
-head(myclassification)
+head(myclassification$classification)
 ```
 $~$
 
 The resulting object contains the inferred phenotype of each animal as a vector in the same order as provided by the rows in the input data frame. Furthermore, the parameters needed for the machine learning model including the intercept and slope of the fitted freezing curve and average freezing during the last 3 min of CS presentation are included in the output of the classification function.
 
-Classification results can be visualized with a bivariate plot of average freezing vs. fitted freezing curve slope (to which we refer as decay rate of freezing) or as actual freezing curves over time bins for sustained and phasic responders.
-For classification with male animals or different MR sessions (MR1 or MR2), the parameters of the function must be specified accordingly. For MR2 classification, the data frame needs to be specified under the argument data_MR2:
+Classification results can be visualized with a bivariate plot of average freezing vs. fitted freezing curve slope (to which we refer as decay rate of freezing) or as actual freezing curves over time bins for sustained and phasic responders. The bivariate plot can be made using ggplot2:
+
+```
+library(ggplot2)
+
+#Convert Classification results including average freezing and decay rate into a dataframe
+plotdata <- as.data.frame(myclassification)
+
+bivariate <-ggplot(plotdata, aes(x=freezing, y = -decayrate, col = classification)) +
+  geom_point() +
+  labs(x = "Freezing", y ="Decay rate", col="") +
+  scale_color_manual(values=c("magenta", "green2")) +
+  stat_ellipse() 
+bivariate
+```
+
+```{r, layout="l-body-outset", echo=FALSE}
+suppressWarnings(library(knitr))
+library(ggplot2)
+library(anxiotraitR)
+mydata <- anxiotraitR::freezingDataset
+mydata_subsetted <- mydata[,13:24]
+myclassification <- suppressMessages(anxiotraitR::classify_freezer(data_MR1 = mydata_subsetted, sex = "female", MR = 1))
+
+plotdata <- as.data.frame(myclassification)
+bivariate <-ggplot(plotdata, aes(x=freezing, y = -decayrate, col = classification)) +
+  geom_point() +
+  labs(x = "Freezing", y ="Decay rate", col="") +
+  scale_color_manual(values=c("magenta", "green2")) +
+  stat_ellipse() 
+bivariate
+
+```
+
 
 For classification with male animals or different MR sessions (MR1 or MR2), the parameters of the function must be specified accordingly. For MR2 classification, the data frame needs to be specified under the argument data_MR2:
 
 $~$
 
 ```
-myclassification_MR2 <- PhenoFreeze::classify_freezer(data_MR2 = mydata_subsetted, sex = "female", MR = 2)
+myclassification_MR2 <- anxiotraitR::classify_freezer(data_MR2 = mydata_subsetted, sex = "female", MR = 2)
 
 ```
 $~$
 
-## Retraining PhenoFreeze
+## Retraining anxiotraitR
 
-Apart from classification with pre-trained models, it is also possible to retrain the existing models by adding new data. To use the retrain_model function, the user must have ggplot2 installed and loaded, as this function will also produce plots for evaluation of the trained models. Due to the small sizes of the data sets, Monte-Carlo Cross-Validation is used to assess the performance of the used models. Per default, the number of iterations is 1000, but can be changed with the training_iterations parameter within the function call. As an example in this tutorial, the loaded dataset from female animals will be added to the male MR1 training data for demonstration purposes:
+Apart from classification with our pre-trained models, it is also possible to retrain the existing models by adding new data. To use the retrain_model function, the user must have ggplot2 installed and loaded, as this function will also produce plots for evaluation of the trained models. Due to the small sizes of the data sets, Monte-Carlo Cross-Validation is used to assess the performance of the models. Per default, the number of iterations is 1000, but this can be changed with the training_iterations parameter within the function call. For demonstration purposes in the tutorial, the example dataset from female animals will be added to the male MR1 training data to retrain the ML model for male animals as the example data was already included in training the original ML models for female mice:
 
 $~$
 
@@ -107,12 +139,12 @@ library(ggplot2)
 
 
 #Retrain male MR1 models by using the data obtained from the example dataset
-retrainingresults <- PhenoFreeze::retrain_model(new_data = mydata_subsetted, sex = "male", MR = 1)
+retrainingresults <- anxiotraitR::retrain_model(new_data = mydata_subsetted, sex = "male", MR = 1)
 
 ```
 $~$
 
-The resulting object can be used to assess the metric plots, metric tables and the trained models themself. For example, to investigate the plot for the accuracy metric:
+The resulting object can be used to assess the ML performance metric plots, metric tables and the trained models themself. For example, the following code can be used to investigate the accuracy of the retrained models:
 
 $~$
 
@@ -127,7 +159,8 @@ Accuracy
 ```
 $~$
 
-This can be done accordingly for Specificity, Sensitivity, F1 and Auroc. The plots can be accessed accordingly with the dollar operator of the resulting object of the retrain_model() function. The metrics can also be viewed as a dataframe which shows the mean and +/- standard deviation. This can be done accordingly:
+The same analysis can be performed accordingly for Specificity, Sensitivity, F1 and AUROC. 
+The performance metrics can also be viewed as a data frame which shows the mean and standard deviation:
 
 $~$
 
@@ -138,7 +171,7 @@ Stats
 
 ```
 
-After investigating all metrics, the user can save the best-performing model as an RDS object. First, the model needs to assigned to a new variable. For example, we will save the radial SVM model (RSVM) in this tutorial. The other models can be accessed via the dollar operator by specifing "SVM" for the SVM with a linear kernel, "RF" for random forest, "Logistic" for the logistic regression model, and "LDA" for linear discriminant analysis.
+After investigating all metrics, the user can save the best-performing model as an RDS object. First, the model needs to be assigned to a new variable. For example, we will save the radial SVM model (RSVM) in this tutorial. The other models can be accessed by specifying the following output arguments: “SVM” for the SVM with a linear kernel, “RF” for random forest, “Logistic” for the logistic regression model, and “LDA” for linear discriminant analysis.
 
 $~$
 
@@ -151,14 +184,17 @@ saveRDS(mymodel, "mymodel.RDS")
 ```
 $~$
 
-After saving the retrained model as an RDS object, this model can now be used for custom classification using the classify_freezer() function. For this, the model name and path of the saved RDS object needs to be specified, as well as the data for custom classification, which needs to be specified under the data variable. The other parameters shown before, like sex and MR are not needed in this step:
-
+After saving the retrained model as an RDS object, this model can now be used for custom classification using the classify_freezer() function. For this, the model name and path of the saved RDS object need to be specified, as well as the data for custom classification, which needs to be specified under the data argument. The sex and MR arguments are not needed in this step:
 $~$
 
 
 ```
-newclassification <- PhenoFreeze::classify_freezer(model = "mymodel.RDS", data = mydata_subsetted)
+newclassification <- anxiotraitR::classify_freezer(model = "mymodel.RDS", data = mydata_subsetted)
 
 ```
 
 ## References
+
+[1] Kovlyagina I, Wierczeiko A, Todorov H, Jacobi E, Tevosian M, et al. (2024) Leveraging interindividual variability in threat conditioning of inbred mice to model trait anxiety. PLOS Biology 22(5): e3002642.
+
+[2] Miedema J, Lutz B, Gerber S, Kovlyagina I & Todorov H (2025) Balancing ethics and statistics: Machine learning facilitates the reduction of sample sizes for highly accurate behavioral classification of inbred mice  
