@@ -22,7 +22,8 @@ A detailed explanation of how to use anxiotraitR is available in the package vig
 Please remember to cite anxiotraitR if you use it in your analysis.
 
 ```
-Miedema J, Lutz B, Gerber S, Kovlyagina I & Todorov H. Balancing ethics and statistics: Machine learning facilitates highly accurate classification of mice according to their trait anxiety with reduced samples sizes (2025).
+Miedema J, Lutz B, Gerber S, Kovlyagina I & Todorov H. Balancing ethics and statistics: Machine learning facilitates highly
+accurate classification of mice according to their trait anxiety with reduced samples sizes (2025).
 ```
 
 ## References 
